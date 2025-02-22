@@ -27,7 +27,7 @@ import java.util.Optional;
 @EnableRedisIndexedHttpSession
 public class SecurityConfig {
 
-    private final String loginSuccessUrl = "/test";
+    private final String loginSuccessUrl = "http://localhost:8081/oauth2/authorization/keycloak";
 
     @Bean
     SecurityFilterChain clientSecurityFilterChain(HttpSecurity http,
@@ -35,7 +35,7 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
         http.oauth2Login(Customizer.withDefaults());
         http.oauth2Login(auth -> {
-            auth.defaultSuccessUrl(loginSuccessUrl);
+            auth.defaultSuccessUrl("http://localhost:8081/test/text");
         });
         http.logout(conf -> {
             val logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);

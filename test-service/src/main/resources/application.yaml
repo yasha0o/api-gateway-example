@@ -19,7 +19,8 @@ server:
     max-swallow-size: 50MB
 
 spring:
-  data:
-    redis:
-      host: localhost
-      port: 6379
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:9990/realms/test-realm

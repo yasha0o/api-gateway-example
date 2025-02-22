@@ -40,7 +40,7 @@ spring:
             provider: keycloak
             authorization-grant-type: authorization_code
             client-id: test-client
-            client-secret: otEflpMbgQAjfhaiNCj3JW5hosvCVWei
+            client-secret: nbtdgUW2uJMCMuwhCgfhOdPFv5Eexjzp
             scope: openid
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
         provider:
