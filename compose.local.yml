@@ -1,0 +1,47 @@
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  postgres:
+    image: postgres:16.2-alpine
+    volumes:
+      - ./.postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak-db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "15432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak -d keycloak-db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: keycloak
+      KC_LOG_LEVEL: DEBUG
+    ports:
+      - "9990:8080"
+      - "9991:8443"
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - start-dev
+
+networks:
+  backend:
+    name: backend
+    driver: bridge

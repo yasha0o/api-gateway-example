@@ -1,0 +1,25 @@
+logging:
+  level:
+    org.springframework: ERROR
+    org.zalando.logbook.Logbook: TRACE
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %marker %logger{36} - [%mdc] - %msg%n"
+server:
+  port: 8082
+  max-http-request-header-size: 512KB
+  servlet:
+    encoding:
+      charset: "UTF-8"
+      force: true
+      enabled: true
+  tomcat:
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
