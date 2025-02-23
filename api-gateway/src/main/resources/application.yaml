@@ -45,8 +45,3 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:9990/realms/test-realm
-
-springdoc:
-  packagesToScan: ru.examples
-  swagger-ui:
-    tags-sorter: alpha
