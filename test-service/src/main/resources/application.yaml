@@ -14,6 +14,7 @@ server:
       charset: "UTF-8"
       force: true
       enabled: true
+    context-path: /test
   tomcat:
     max-http-form-post-size: 50MB
     max-swallow-size: 50MB
@@ -24,3 +25,9 @@ spring:
       resource-server:
         jwt:
           issuer-uri: http://localhost:9990/realms/test-realm
+
+springdoc:
+  service-url: http://localhost:8081${server.servlet.context-path}
+  packagesToScan: ru.examples
+  swagger-ui:
+    tags-sorter: alpha
