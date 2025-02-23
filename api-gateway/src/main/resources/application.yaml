@@ -45,3 +45,7 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:9990/realms/test-realm
+app:
+  host: http://localhost:8081
+  login-url: ${app.host}/oauth2/authorization/keycloak
+  main-page: ${app.host}/test/text

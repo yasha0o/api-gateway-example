@@ -1,9 +1,11 @@
 package ru.examples.api.config;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -21,26 +23,26 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Optional;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 @EnableRedisIndexedHttpSession
 public class SecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
-    private final String loginSuccessUrl = "http://localhost:8081/oauth2/authorization/keycloak";
-
     @Bean
     SecurityFilterChain clientSecurityFilterChain(HttpSecurity http,
-                                                  ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+                                                  ClientRegistrationRepository clientRegistrationRepository,
+                                                  @Value("${app.main-page}") String mainPage,
+                                                  @Value("${app.login-url}") String loginUrl) throws Exception {
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
         http.oauth2Login(Customizer.withDefaults());
         http.oauth2Login(auth -> {
-            auth.defaultSuccessUrl("http://localhost:8081/test/text");
+            auth.defaultSuccessUrl(mainPage);
         });
         http.logout(conf -> {
             val logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-            logoutSuccessHandler.setPostLogoutRedirectUri(loginSuccessUrl);
+            logoutSuccessHandler.setPostLogoutRedirectUri(loginUrl);
             conf.logoutSuccessHandler(logoutSuccessHandler);
             conf.invalidateHttpSession(true);
             conf.clearAuthentication(true);
@@ -52,15 +54,16 @@ public class SecurityConfig {
 
         http.anonymous(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/login/**", "/logout", "/oauth2/**", "/swagger-ui/**",
+            auth.requestMatchers(
+                    "/login/**",
+                    "/logout",
+                    "/oauth2/**",
+                    "/swagger-ui/**",
                     "/*/api-docs/**").permitAll();
             auth.anyRequest().authenticated();
         });
-
-        http.sessionManagement(cfg -> cfg.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         return http.build();
     }
-
 
 
     @Bean
